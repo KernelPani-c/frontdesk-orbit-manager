@@ -55,7 +55,7 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--app-font);
   --shadow-card: var(--shadow-card);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -69,7 +69,7 @@
 
 :root {
   --radius: 0.75rem;
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --app-font: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --background: oklch(0.99 0.002 250);
   --foreground: oklch(0.22 0.03 260);
   --card: oklch(1 0 0);
@@ -152,7 +152,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
+    font-family: var(--app-font);
     -webkit-font-smoothing: antialiased;
   }
 }
