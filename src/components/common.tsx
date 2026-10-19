@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { buttonVariants } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export function PageHeader({
   title,
@@ -176,5 +177,16 @@ export function CallOutcomeBadge({ outcome }: { outcome: keyof typeof outcomeVar
     <Badge variant={outcomeVariant[outcome]} className="capitalize">
       {outcome}
     </Badge>
+  );
+}
+
+/** Form field with label and validation error message. */
+export function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
   );
 }

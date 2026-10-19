@@ -7,11 +7,10 @@ import { Plus, Pencil, Trash2, Search, Tags } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useBusiness, formatMoney } from "@/lib/business";
-import { PageHeader, LoadingRows, ErrorState, EmptyState, ConfirmDialog, SampleBadge } from "@/components/common";
+import { PageHeader, LoadingRows, ErrorState, EmptyState, ConfirmDialog, SampleBadge, Field } from "@/components/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -199,15 +198,5 @@ function ServiceDialog({ service, businessId, onClose, onSaved }: { service: Par
         </form>
       </DialogContent>
     </Dialog>
-  );
-}
-
-export function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <Label>{label}</Label>
-      {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
-    </div>
   );
 }
