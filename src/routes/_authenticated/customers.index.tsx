@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/customers/")({
   component: CustomersPage,
 });
 
-export const customerSchema = z.object({
+const customerSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(120),
   phone: z.string().trim().min(5, "Enter a valid phone number").max(30).regex(/^[+\d\s()-]+$/, "Only digits, spaces, + ( ) -"),
   email: z.union([z.literal(""), z.string().trim().email("Invalid email").max(255)]),
