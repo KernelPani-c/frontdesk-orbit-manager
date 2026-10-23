@@ -81,7 +81,7 @@ function IntegrationsPage() {
 }
 
 function ConfigDialog({ row, onClose, onSaved }: { row: Integration; onClose: () => void; onSaved: () => void }) {
-  const meta = CATALOG[row.kind];
+  const meta = CATALOG[row.kind]!;
   const [provider, setProvider] = useState(row.provider ?? "");
   const [config, setConfig] = useState<Record<string, string>>((row.config as Record<string, string>) ?? {});
 
