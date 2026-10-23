@@ -38,7 +38,7 @@ function AuthPage() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const parsed = signInSchema.safeParse(Object.fromEntries(form));
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword(parsed.data);
     setLoading(false);
@@ -50,7 +50,7 @@ function AuthPage() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const parsed = signUpSchema.safeParse(Object.fromEntries(form));
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
