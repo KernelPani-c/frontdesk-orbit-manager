@@ -124,7 +124,14 @@ function SettingsPage() {
         </Card>
         <Card className="shadow-card">
           <CardHeader><CardTitle className="text-base">Appointment policies</CardTitle></CardHeader>
-          <CardContent><Textarea rows={5} value={form.appointment_policy ?? ""} placeholder="e.g. Cancel at least 24 hours in advance." onChange={(e) => set("appointment_policy", e.target.value)} /></CardContent>
+          <CardContent className="space-y-4">
+            <Field label="Buffer time between appointments (minutes)" hint="Extra gap reserved after each appointment before the next one can start.">
+              <Input type="number" min="0" max="120" value={form.appointment_buffer_minutes ?? 0} onChange={(e) => set("appointment_buffer_minutes", Math.max(0, Number(e.target.value) || 0))} />
+            </Field>
+            <Field label="Booking & cancellation policy">
+              <Textarea rows={5} value={form.appointment_policy ?? ""} placeholder="e.g. Cancel at least 24 hours in advance." onChange={(e) => set("appointment_policy", e.target.value)} />
+            </Field>
+          </CardContent>
         </Card>
         <Card className="shadow-card">
           <CardHeader><CardTitle className="text-base">Human handoff contact</CardTitle></CardHeader>

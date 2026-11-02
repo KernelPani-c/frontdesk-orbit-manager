@@ -185,11 +185,12 @@ function AppointmentDialog({ appt, businessId, onClose, onSaved }: { appt: Parti
   const opts = useQuery({
     queryKey: ["appt-options", businessId],
     queryFn: async () => {
-      const [c, s] = await Promise.all([
+      const [c, s, b] = await Promise.all([
         supabase.from("customers").select("id, full_name").eq("business_id", businessId).order("full_name"),
         supabase.from("services").select("id, name, duration_minutes, is_active").eq("business_id", businessId).order("name"),
+        supabase.from("businesses").select("appointment_buffer_minutes").eq("id", businessId).maybeSingle(),
       ]);
-      return { customers: c.data ?? [], services: s.data ?? [] };
+      return { customers: c.data ?? [], services: s.data ?? [], buffer: b.data?.appointment_buffer_minutes ?? 0 };
     },
   });
   const initial = toLocalInput(appt.starts_at);
@@ -217,7 +218,8 @@ function AppointmentDialog({ appt, businessId, onClose, onSaved }: { appt: Parti
     if (Object.keys(errs).length) return;
 
     const service = opts.data?.services.find((s) => s.id === form.service_id);
-    const end = new Date(start.getTime() + (service?.duration_minutes ?? 30) * 60000);
+    // Buffer time (set in Business Settings) is reserved after the appointment before the next one can start.
+    const end = new Date(start.getTime() + ((service?.duration_minutes ?? 30) + (opts.data?.buffer ?? 0)) * 60000);
     const payload = {
       customer_id: form.customer_id,
       service_id: form.service_id,
