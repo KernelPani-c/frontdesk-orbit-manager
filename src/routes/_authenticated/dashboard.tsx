@@ -49,7 +49,7 @@ function Dashboard() {
   const aiCalls = calls.filter((c) => c.handled_by === "ai").length;
   const transferred = calls.filter((c) => c.outcome === "transferred").length;
   const missed = calls.filter((c) => c.outcome === "missed").length;
-  const booked = appts.filter((a) => a.status !== "cancelled").length;
+  const booked = appts.filter((a) => a.status !== "cancelled" && a.status !== "no_show").length;
   const hasSample = calls.some((c) => c.is_sample) || appts.some((a) => a.is_sample);
 
   const days = lastDays(14);
@@ -65,7 +65,7 @@ function Dashboard() {
     { name: "AI handled", value: aiCalls },
     { name: "Transferred", value: transferred },
   ];
-  const upcoming = appts.filter((a) => new Date(a.starts_at) > new Date() && a.status !== "cancelled").slice(0, 5);
+  const upcoming = appts.filter((a) => new Date(a.starts_at) > new Date() && a.status !== "cancelled" && a.status !== "no_show").slice(0, 5);
 
   return (
     <div>

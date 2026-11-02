@@ -82,7 +82,7 @@ function AppointmentsPage() {
           <SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
-            {["pending", "confirmed", "completed", "cancelled"].map((s) => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
+            {["pending", "confirmed", "completed", "cancelled", "no_show"].map((s) => <SelectItem key={s} value={s} className="capitalize">{s.replace("_", " ")}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
@@ -107,7 +107,14 @@ function AppointmentsPage() {
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {a.status === "pending" && <Button size="sm" variant="outline" onClick={() => setApptStatus(a, "confirmed")}><Check className="h-4 w-4" /> Confirm</Button>}
-                  {a.status === "confirmed" && <Button size="sm" variant="outline" onClick={() => setApptStatus(a, "completed")}><Check className="h-4 w-4" /> Complete</Button>}
+                  {a.status === "confirmed" && (
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => setApptStatus(a, "completed")}><Check className="h-4 w-4" /> Complete</Button>
+                      <ConfirmDialog title="Mark as no-show?" description="The customer did not arrive for this appointment." confirmLabel="Mark no-show"
+                        onConfirm={() => setApptStatus(a, "no_show")}
+                        trigger={<Button size="sm" variant="outline">No-show</Button>} />
+                    </>
+                  )}
                   {(a.status === "pending" || a.status === "confirmed") && (
                     <ConfirmDialog title="Cancel appointment?" description="The customer's slot will be released." confirmLabel="Cancel appointment"
                       onConfirm={() => setApptStatus(a, "cancelled")}
@@ -178,11 +185,12 @@ function AppointmentDialog({ appt, businessId, onClose, onSaved }: { appt: Parti
   const opts = useQuery({
     queryKey: ["appt-options", businessId],
     queryFn: async () => {
-      const [c, s] = await Promise.all([
+      const [c, s, b] = await Promise.all([
         supabase.from("customers").select("id, full_name").eq("business_id", businessId).order("full_name"),
         supabase.from("services").select("id, name, duration_minutes, is_active").eq("business_id", businessId).order("name"),
+        supabase.from("businesses").select("appointment_buffer_minutes").eq("id", businessId).maybeSingle(),
       ]);
-      return { customers: c.data ?? [], services: s.data ?? [] };
+      return { customers: c.data ?? [], services: s.data ?? [], buffer: b.data?.appointment_buffer_minutes ?? 0 };
     },
   });
   const initial = toLocalInput(appt.starts_at);
@@ -210,7 +218,8 @@ function AppointmentDialog({ appt, businessId, onClose, onSaved }: { appt: Parti
     if (Object.keys(errs).length) return;
 
     const service = opts.data?.services.find((s) => s.id === form.service_id);
-    const end = new Date(start.getTime() + (service?.duration_minutes ?? 30) * 60000);
+    // Buffer time (set in Business Settings) is reserved after the appointment before the next one can start.
+    const end = new Date(start.getTime() + ((service?.duration_minutes ?? 30) + (opts.data?.buffer ?? 0)) * 60000);
     const payload = {
       customer_id: form.customer_id,
       service_id: form.service_id,
@@ -258,7 +267,7 @@ function AppointmentDialog({ appt, businessId, onClose, onSaved }: { appt: Parti
           <Field label="Status">
             <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as Status })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{["pending", "confirmed", "completed", "cancelled"].map((s) => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent>
+              <SelectContent>{["pending", "confirmed", "completed", "cancelled", "no_show"].map((s) => <SelectItem key={s} value={s} className="capitalize">{s.replace("_", " ")}</SelectItem>)}</SelectContent>
             </Select>
           </Field>
           <Field label="Internal notes"><Textarea value={form.notes} maxLength={2000} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Field>
