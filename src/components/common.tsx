@@ -154,12 +154,13 @@ const appointmentVariant = {
   confirmed: "info",
   completed: "success",
   cancelled: "muted",
+  no_show: "danger",
 } as const;
 
 export function AppointmentStatusBadge({ status }: { status: keyof typeof appointmentVariant }) {
   return (
     <Badge variant={appointmentVariant[status]} className="capitalize">
-      {status}
+      {status.replace("_", " ")}
     </Badge>
   );
 }

@@ -116,6 +116,7 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
+          appointment_buffer_minutes: number
           appointment_policy: string | null
           created_at: string
           currency: string
@@ -136,6 +137,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          appointment_buffer_minutes?: number
           appointment_policy?: string | null
           created_at?: string
           currency?: string
@@ -156,6 +158,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          appointment_buffer_minutes?: number
           appointment_policy?: string | null
           created_at?: string
           currency?: string
@@ -562,7 +565,12 @@ export type Database = {
       seed_sample_data: { Args: { _bid: string }; Returns: undefined }
     }
     Enums: {
-      appointment_status: "pending" | "confirmed" | "completed" | "cancelled"
+      appointment_status:
+        | "pending"
+        | "confirmed"
+        | "completed"
+        | "cancelled"
+        | "no_show"
       call_outcome:
         | "answered"
         | "booked"
@@ -698,7 +706,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      appointment_status: ["pending", "confirmed", "completed", "cancelled"],
+      appointment_status: [
+        "pending",
+        "confirmed",
+        "completed",
+        "cancelled",
+        "no_show",
+      ],
       call_outcome: [
         "answered",
         "booked",
